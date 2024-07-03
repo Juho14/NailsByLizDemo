@@ -1,0 +1,250 @@
+:root {
+  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+
+  color-scheme: light dark;
+  color: rgba(255, 255, 255, 0.87);
+  background-color: #fdcdd4;
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+a {
+  font-weight: 500;
+  color: #646cff;
+  text-decoration: inherit;
+}
+
+a:hover {
+  color: #535bf2;
+}
+
+
+body {
+  margin: 0;
+  display: flex;
+  place-items: center;
+  /* centers in both axis */
+  min-width: 320px;
+  min-height: 100vh;
+}
+
+
+.header-font-size {
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.cell-font-size {
+  font-size: 14px;
+  font-weight: 600;
+  /* Adjust the font size as needed */
+}
+
+/* CSS for the selected row */
+.ag-theme-material .ag-row-selected {
+  background-color: #ffe0ec;
+  /* Brighter pink color for selected row */
+}
+
+.ag-theme-material .ag-row.alternate-row {
+  background-color: hsl(338, 100%, 92%);
+  /* Adjust the color as needed */
+}
+
+.ag-theme-material .ag-row:hover {
+  background-color: #ffc2e0;
+  /* Lighter pink color for hover effect */
+}
+
+h1 {
+  font-size: 3.2em;
+  line-height: 1.1;
+}
+
+button {
+  border-radius: 8px;
+  border: 1px solid transparent;
+  padding: 0.6em 1.2em;
+  font-size: 1em;
+  font-weight: 500;
+  font-family: inherit;
+  background-color: #1a1a1a;
+  cursor: pointer;
+  transition: border-color 0.25s;
+}
+
+button:hover {
+  border-color: #646cff;
+}
+
+button:focus,
+button:focus-visible {
+  outline: 4px auto -webkit-focus-ring-color;
+}
+
+.reservations-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  /* This ensures it takes the full height of the viewport */
+  width: 100%;
+  /* Take the full width of its parent */
+}
+
+.centered-container {
+  display: flex;
+  flex-direction: column;
+  /* Stack children vertically */
+  align-items: center;
+  /* Center children horizontally */
+  justify-content: center;
+  /* Center children vertically */
+}
+
+.centered-container {
+  display: flex;
+  justify-content: space-between;
+  /* Spread items evenly along the main axis */
+}
+
+.reservation-day {
+  flex: 1;
+  /* Each day takes up equal space */
+  margin: 0 5px;
+  /* Add margin for spacing between days */
+}
+
+.services-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  /* Adjust the gap between items */
+  justify-content: space-between;
+  /* Distribute items evenly along the main axis */
+}
+
+.service-card {
+  flex-basis: calc(45% - 5px);
+  /* Each card takes up 45% of the container's width minus half of the gap */
+  border: 2px solid black;
+  margin-bottom: 10px;
+  /* Adjust vertical margin */
+  padding: 10px;
+  /* Adjust padding */
+}
+
+
+.reservation-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  /* Adjust the gap between items */
+  justify-content: space-between;
+  /* Distribute items evenly along the main axis */
+}
+
+.reservation-card {
+  border: 2px solid black;
+  margin-bottom: 10px;
+  /* Adjust vertical margin */
+  padding: 10px;
+  /* Adjust padding */
+}
+
+/* Media query for narrow screens */
+@media screen and (max-width: 600px) {
+  .service-card {
+    flex-basis: 100%;
+    /* Each card takes up 100% of the container's width */
+  }
+}
+
+.settings-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: space-between;
+}
+
+.setting-card {
+  flex-basis: calc(45% - 5px);
+  border: 2px solid black;
+  margin-bottom: 10px;
+  padding: 10px;
+}
+
+/* Media query for narrow screens */
+@media screen and (max-width: 600px) {
+  .setting-card {
+    flex-basis: 100%;
+  }
+}
+
+.mobile-reservations-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  /* Center items horizontally */
+  padding: 5px;
+  /* Add padding around the container */
+}
+
+.mobile-reservation-item {
+  margin-bottom: 20px;
+  /* Adjust spacing between items */
+}
+
+.users-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+}
+
+.users-item {
+  margin-bottom: 20px;
+}
+
+.rbc-event {
+  display: flex;
+  align-items: center;
+  /* Vertical centering */
+  justify-content: center;
+  /* Horizontal centering */
+  background-color: #FFB6C1;
+  /* Default color for events */
+  color: #fff;
+  /* Text color for events */
+  border-radius: 15px;
+  /* Rounded corners */
+  padding: 10px 10px;
+  margin: 5px;
+  /* Adjust margin as needed */
+}
+
+/* Target month view to remove margin */
+.rbc-month-view .rbc-event {
+  margin: 0;
+  /* Remove margin in month view */
+}
+
+/* Apply color to selected event */
+.rbc-selected .rbc-event {
+  background-color: #B76E79 !important;
+}
+
+@keyframes fadeOut {
+  0% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+  }
+}
