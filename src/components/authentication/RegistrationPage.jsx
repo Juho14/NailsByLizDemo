@@ -37,6 +37,7 @@ const RegistrationPage = () => {
             register(user)
                 .then(response => {
                     if (response.success) {
+                        alert("Rekisteröinti onnistui")
                         navigate("/login", { replace: true });
                     } else {
                         throw new Error("Registration failed");

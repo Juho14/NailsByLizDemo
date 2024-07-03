@@ -1,11 +1,12 @@
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import { Button, IconButton, useMediaQuery } from '@mui/material';
+import { Button, IconButton, Typography, useMediaQuery } from '@mui/material';
 import { jwtDecode } from "jwt-decode";
 import React, { useEffect, useState } from "react";
 import { useNavigate } from 'react-router-dom';
 import { cancelReservation, fetchCurrentUsersReservations } from "../../fetches/ReservationFetch";
 import { formatDateLocale, formatReservationTimeslot } from "../TimeFormatting/TimeFormats";
 import { useAuth } from '../authentication/AuthProvider';
+import LoadingPlaceholder from '../errorhandling/LoadingPlaceholder';
 
 export default function CurrentUserReservations() {
     const [reservations, setReservations] = useState([]);
@@ -13,7 +14,7 @@ export default function CurrentUserReservations() {
     const [cancelError, setCancelError] = useState(null);
     const isMobile = useMediaQuery((theme) => theme.breakpoints.down('md'));
     const { authToken, accessToken } = useAuth();
-    let decodedToken = jwtDecode(authToken);
+    const decodedToken = jwtDecode(authToken);
     const navigate = useNavigate();
 
     const [isLoading, setIsLoading] = useState(true);
@@ -23,7 +24,6 @@ export default function CurrentUserReservations() {
             setIsLoading(true);
             try {
                 const reservationData = await fetchCurrentUsersReservations(authToken, accessToken);
-                // Sort reservations by startTime
                 const sortedReservations = reservationData.sort((a, b) => new Date(a.startTime) - new Date(b.startTime));
                 setReservations(sortedReservations);
             } catch (error) {
@@ -48,56 +48,57 @@ export default function CurrentUserReservations() {
             setCancelError(error.message);
         }
     };
-    if (isLoading) {
-        return <div>Ladataan...</div>;
-    }
 
     const handleGoBack = () => {
         navigate(-1);
+    };
+
+    if (isLoading) {
+        return <LoadingPlaceholder />;
     }
 
     return (
-        <>
-            {isMobile ? (
-                <div style={{ position: 'absolute', top: 0, right: 0 }}>
+        <div style={{ height: '100vh', overflow: 'hidden', backgroundColor: '#fff', display: 'flex', flexDirection: 'column' }}>
+            {isMobile && (
+                <div style={{ position: 'absolute', top: 0, right: 0, zIndex: 100 }}>
                     <IconButton onClick={handleGoBack}>
                         <ArrowBackIcon />
                     </IconButton>
                 </div>
-            ) : (
-                null
             )}
-            {fetchingError && <p>Error fetching reservations: {fetchingError}</p>}
-            {cancelError && <p>Error canceling reservation: {cancelError}</p>}
-            <h1>Omat varaukset - {decodedToken.fname}</h1>
-            {reservations.length === 0 ? (
-                <div>
-                    <h3>Ei tulevia varauksia</h3>
-                    <Button variant='contained' onClick={() => navigate("/reservations/new")}>Varaa aika?</Button>
-                </div>
-            ) : (
-                <div className="reservations-container" style={{ display: 'flex', flexWrap: 'wrap', gap: '5px' }}>
-                    {reservations.map(reservation => {
+
+            <Typography variant="h3" component="h1" style={{ margin: '20px 0', textAlign: 'center' }}>Omat varaukset - {decodedToken.fname}</Typography>
+
+            <div style={{ flex: '1', overflowY: 'auto', display: 'flex', justifyContent: 'center', alignItems: 'center', flexWrap: 'wrap', gap: '10px', padding: '10px' }}>
+                {reservations.length === 0 ? (
+                    <div style={{ width: '100%', textAlign: 'center' }}>
+                        <h3>Ei tulevia varauksia</h3>
+                        <Button variant='contained' onClick={() => navigate("/reservations/new")}>Varaa aika?</Button>
+                    </div>
+                ) : (
+                    reservations.map(reservation => {
                         const startTime = new Date(reservation.startTime);
                         const currentTime = new Date();
                         const timeDifference = (startTime - currentTime) / (1000 * 60 * 60);
                         return (
-                            <div key={reservation.id} style={{ width: '210px', height: '230px', backgroundColor: '#FFC0CB', borderRadius: '10px', margin: '5px' }}>
+                            <div key={reservation.id} style={{ width: '210px', height: '255px', backgroundColor: '#FFC0CB', borderRadius: '10px', margin: '5px', padding: '10px' }}>
                                 <p>Palvelu: {reservation.nailService.type}</p>
                                 <p>Päivä: {formatDateLocale(startTime)}</p>
                                 <p>Varattu aika: {formatReservationTimeslot(reservation)}</p>
                                 <p>Hinta: {reservation.price}€</p>
                                 {timeDifference > 24 ? (
-                                    <button onClick={() => handleCancelReservation(reservation.id)}>Peru varaus</button>
+                                    <Button variant="contained" onClick={() => handleCancelReservation(reservation.id)}>Peru varaus</Button>
                                 ) : (
-                                    <button disabled style={{ backgroundColor: 'gray' }}>Varaus lukittu</button>
+                                    <Button variant="contained" disabled style={{ backgroundColor: 'gray' }}>Varaus lukittu</Button>
                                 )}
                             </div>
                         );
-                    })}
-                </div>
-            )}
+                    })
+                )}
+            </div>
 
-        </>
+            {fetchingError && <p style={{ textAlign: 'center', color: 'red' }}>Error fetching reservations: {fetchingError}</p>}
+            {cancelError && <p style={{ textAlign: 'center', color: 'red' }}>Error canceling reservation: {cancelError}</p>}
+        </div>
     );
 }

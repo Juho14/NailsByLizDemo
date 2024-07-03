@@ -6,7 +6,7 @@ import { changePassword, deleteCurrentUser, updateUser } from '../../fetches/Use
 import { useAuth } from './AuthProvider';
 
 const EditUserDetails = () => {
-    const { authToken, setAuthToken } = useAuth();
+    const { authToken, setAuthToken, accessToken, setAccessToken } = useAuth();
     let decodedToken = jwtDecode(authToken);
     const [updateInfoOpen, setUpdateInfoOpen] = useState(false);
     const [changePasswordOpen, setChangePasswordOpen] = useState(false);
@@ -85,7 +85,8 @@ const EditUserDetails = () => {
                 .then(response => {
                     alert('Salasana vaihdettu, teidät kirjataan ulos.');
                     setChangePasswordOpen(false);
-                    setAuthToken('');
+                    setAuthToken(null);
+                    setAccessToken(null);
                     navigate("/login", { replace: true });
                 })
                 .catch(err => {
@@ -96,15 +97,20 @@ const EditUserDetails = () => {
     };
 
     const handleDeleteUser = () => {
-        deleteCurrentUser(authToken)
-            .then(response => {
-                alert('Käyttäjä poistettu');
-                navigate("/register", { replace: true });
-            })
-            .catch(err => {
-                setErrorMessage("Poisto epäonnistui: " + err.message);
-                console.error(err);
-            });
+        const confirm = window.confirm("Haluatko varmasti poistaa tilin?")
+        if (confirm) {
+            deleteCurrentUser(authToken, accessToken)
+                .then(response => {
+                    alert('Käyttäjä poistettu');
+                    setAuthToken(null);
+                    setAccessToken(null);
+                    navigate("/login", { replace: true });
+                })
+                .catch(err => {
+                    setErrorMessage("Poisto epäonnistui: " + err.message);
+                    console.error(err);
+                });
+        }
     };
 
     return (

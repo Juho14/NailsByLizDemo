@@ -1,6 +1,6 @@
 import CssBaseline from '@mui/material/CssBaseline';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
-import { BrowserRouter } from "react-router-dom";
+import { HashRouter } from 'react-router-dom';
 import './App.css';
 import AuthProvider from './components/authentication/AuthProvider';
 import { NailServicesProvider } from './components/nailservices/NailServiceContext';
@@ -21,13 +21,13 @@ function App() {
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
-      <BrowserRouter>
+      <HashRouter>
         <AuthProvider>
           <NailServicesProvider>
             <MainNavigation />
           </NailServicesProvider>
         </AuthProvider>
-      </BrowserRouter>
+      </HashRouter>
     </ThemeProvider>
   );
 }
