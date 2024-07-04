@@ -178,7 +178,7 @@ const ReservationDialog = () => {
     const handleSaveReservation = () => {
         const updatedReservation = {
             ...reservation,
-            startTime: selectedTime,
+            startTime: time ? selectedTime : `${formatDateBackend(new Date(reservation.startTime))}T${formatTimeHHMM(reservation.startTime)}:00.000Z`,
             nailService: {
                 id: newServiceId || serviceId || selectedNailService.id,
             },
@@ -209,6 +209,21 @@ const ReservationDialog = () => {
                 fontWeight: 'bold',
                 color: 'black',
             },
+        },
+        picker: {
+            fontSize: isMobile ? '1em' : '1.2em',
+            padding: '10px',
+            width: '100%',
+            borderRadius: isMobile ? 50 : 100,
+        },
+        button: {
+            padding: '10px 20px',
+            backgroundColor: '#D4F0F0',
+            borderColor: '#8FCACA',
+            fontWeight: 'bold',
+            borderWidth: 3,
+            borderRadius: 15,
+            margin: 5,
         },
         label: {
             fontSize: '24px',
@@ -264,14 +279,14 @@ const ReservationDialog = () => {
                                     <div> No selected service </div>
                                 )}
                             </div>
-
-                            <NailServicePicker
-                                onSelectNailService={handleServiceSelect}
-                            />
-                            <Button variant="outlined" color="primary" onClick={handleSelectTimePress}>
-                                Valitse aika
-                            </Button>
-
+                            <div style={styles.picker}>
+                                <NailServicePicker
+                                    onSelectNailService={handleServiceSelect}
+                                />
+                                <Button variant="contained" color="primary" style={styles.button} onClick={handleSelectTimePress}>
+                                    Valitse aika
+                                </Button>
+                            </div>
                         </>
                     ) : null}
 
