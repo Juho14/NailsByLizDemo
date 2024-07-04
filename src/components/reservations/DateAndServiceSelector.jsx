@@ -25,8 +25,6 @@ const DateAndServiceSelector = () => {
         selectedDate.setHours(0, 0, 0, 0);
         const currentDate = new Date();
         currentDate.setHours(0, 0, 0, 0);
-        console.log(selectedDate);
-        console.log(currentDate);
         if (selectedDate <= currentDate && userRole !== "ROLE_ADMIN") {
             alert('Virheellinen päivämäärä');
             return false;

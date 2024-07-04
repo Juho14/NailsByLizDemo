@@ -189,7 +189,7 @@ const ReservationDialog = () => {
             });
         } else {
             saveReservation(updatedReservation).then(() => {
-                navigate(authToken ? (userRole === "ROLE_ADMIN" ? "/reservations" : "/my-reservations") : ('/'))
+                navigate(authToken ? (userRole === "ROLE_ADMIN" ? (isMobile ? "/reservations/1" : "/reservations") : "/my-reservations") : ('/'))
             });
         }
     };

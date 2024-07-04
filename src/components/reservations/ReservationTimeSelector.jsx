@@ -156,7 +156,6 @@ const ReservationTimeSelector = () => {
                 const reservationEndTime = new Date(reservationObject.endTime);
 
                 if (startTime < reservationEndTime && timeSlotEndTime >= reservationStartTime) {
-                    console.log(reservationEndTime);
                     overlapsWithReservation = true;
                     lastReservationEndTime = reservationEndTime;
                     break;

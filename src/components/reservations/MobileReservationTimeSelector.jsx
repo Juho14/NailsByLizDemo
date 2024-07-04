@@ -5,6 +5,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { fetchReservationsOfDay } from '../../fetches/ReservationFetch';
 import { fetchActiveReservationSetting } from '../../fetches/ReservationSettingsFetch';
 import { adjustTimeForTimezone, formatDateBackend, formatDateLocale, formatTimeHHMM } from '../TimeFormatting/TimeFormats';
+import { useAuth } from '../authentication/AuthProvider';
 import LoadingPlaceholder from '../errorhandling/LoadingPlaceholder';
 
 const MobileReservationTimeSelector = () => {
@@ -18,6 +19,7 @@ const MobileReservationTimeSelector = () => {
     const [isLoading, setIsLoading] = useState(true);
     const [dateIsValid, setDateIsValid] = useState(null);
     const [timeSlots, setTimeSlots] = useState([]);
+    const { userRole } = useAuth();
 
     const navigate = useNavigate();
 
@@ -80,11 +82,13 @@ const MobileReservationTimeSelector = () => {
 
         const startTime = new Date(`${reservationDate.toISOString().split('T')[0]}T${reservationSettings.startTime}`);
         const endTime = new Date(`${reservationDate.toISOString().split('T')[0]}T${reservationSettings.endTime}`);
+        const localEndOfWork = new Date(`${formatDateBackend(selectedDate)}T19:00:00Z`);
 
         while (startTime <= endTime) {
             let timeSlotEndTime = new Date(startTime.getTime() + (nailServiceDuration * 60000));
             let overlapsWithReservation = false;
             let localStartTime = adjustTimeForTimezone(startTime);
+
             for (let i = 0; i < reservations.length; i++) {
                 const reservationObject = reservations[i];
                 if (reservationObject.status !== "OK") {
@@ -98,13 +102,22 @@ const MobileReservationTimeSelector = () => {
                     break;
                 }
             }
+
             if (!overlapsWithReservation) {
+                // Check if user is not ROLE_ADMIN and the time slot end time exceeds local end of work time
+                if (userRole !== 'ROLE_ADMIN' && adjustTimeForTimezone(timeSlotEndTime) > localEndOfWork) {
+                    startTime.setMinutes(startTime.getMinutes() + 30);
+                    continue;
+                }
+                console.log(localEndOfWork);
+                console.log(adjustTimeForTimezone(timeSlotEndTime));
                 slots.push(localStartTime);
             }
             startTime.setMinutes(startTime.getMinutes() + 30);
         }
         return slots;
     };
+
 
     const handlePreviousDay = () => {
         const previousDay = new Date(reservationDate);
