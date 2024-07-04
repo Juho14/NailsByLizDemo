@@ -34,7 +34,7 @@ export default function PriceList() {
                         <li key={service.id}>
                             <strong>{service.type}: {service.price}€</strong>
                             <br />
-                            <span>{service.description} <strong>Hinta: {service.price}€, Kesto {service.duration / 60}h</strong></span>
+                            <span>{service.description} <br></br><strong>Hinta: {service.price}€, Kesto {service.duration / 60}h</strong></span>
                             <br /><br />
                         </li>
                     ))}
