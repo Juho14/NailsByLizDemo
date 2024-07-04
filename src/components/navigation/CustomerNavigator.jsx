@@ -5,7 +5,7 @@ import AppRoutes from '../AppRoutes';
 import { useAuth } from '../authentication/AuthProvider';
 
 const CustomerNavigator = () => {
-    const { authToken, setAuthToken } = useAuth();
+    const { authToken, logout } = useAuth();
     const navigate = useNavigate();
 
     const handleTabClick = (route) => {
@@ -15,7 +15,7 @@ const CustomerNavigator = () => {
     const handleLogout = () => {
         const confirmLogout = window.confirm('Vahvista uloskirjautuminen'); // Confirm logout message
         if (confirmLogout) {
-            setAuthToken(null);
+            logout();
             navigate('/');
         }
     };

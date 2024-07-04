@@ -16,20 +16,24 @@ export const NailServicesProvider = ({ children }) => {
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
 
+    const getNailServices = async () => {
+        setIsLoading(true);
+        try {
+            const services = await fetchNailServices(authToken, accessToken);
+            setNailServices(services);
+            setError(null);
+        } catch (err) {
+            setError('Failed to fetch nail services.');
+            console.error('Error fetching nail services:', err);
+        }
+        setIsLoading(false);
+
+    };
+
     useEffect(() => {
-        const getNailServices = async () => {
-            try {
-                const services = await fetchNailServices(authToken, accessToken);
-                setNailServices(services);
-            } catch (err) {
-                setError('Failed to fetch nail services.');
-                console.error('Error fetching nail services:', err);
-            } finally {
-                setIsLoading(false);
-            }
-        };
 
         getNailServices();
+
     }, [authToken]);
 
     const getServiceById = async (serviceId) => {
@@ -37,6 +41,7 @@ export const NailServicesProvider = ({ children }) => {
         try {
             const service = await fetchSpecificNailService(serviceId);
             setSelectedService(service);
+            setError(null);
         } catch (error) {
             setError('Failed to fetch the specific nail service.');
             console.error('Error fetching the specific nail service:', error);
@@ -44,11 +49,9 @@ export const NailServicesProvider = ({ children }) => {
             setIsLoading(false);
         }
     };
-
     if (isLoading) {
-        return <LoadingPlaceholder />
+        return <LoadingPlaceholder />;
     }
-
     return (
         <NailServicesContext.Provider value={{ nailServices, selectedService, getServiceById, isLoading, error }}>
             {children}

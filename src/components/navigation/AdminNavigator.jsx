@@ -7,7 +7,7 @@ import { useAuth } from '../authentication/AuthProvider';
 
 export default function AdminNavigator() {
     const [drawerOpen, setDrawerOpen] = useState(false);
-    const { authToken, setAuthToken, userRole } = useAuth();
+    const { authToken, setAuthToken, userRole, accessToken, setAccessToken, logout } = useAuth();
     const navigate = useNavigate();
     const isMobile = useMediaQuery((theme) => theme.breakpoints.down('md'));
 
@@ -16,7 +16,7 @@ export default function AdminNavigator() {
     };
 
     const handleLogout = () => {
-        setAuthToken(null);
+        logout();
         navigate('/');
     };
 

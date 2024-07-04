@@ -6,7 +6,7 @@ import AppRoutes from '../AppRoutes';
 import { useAuth } from '../authentication/AuthProvider';
 
 const CustomerMobileNavigator = () => {
-    const { authToken, setAuthToken } = useAuth();
+    const { authToken, logout } = useAuth();
     const navigate = useNavigate();
     const [anchorEl, setAnchorEl] = useState(null); // State for anchor element of menu
 
@@ -18,7 +18,7 @@ const CustomerMobileNavigator = () => {
     const handleLogout = () => {
         const confirmLogout = window.confirm('Vahvista uloskirjautuminen'); // Confirm logout message
         if (confirmLogout) {
-            setAuthToken(null);
+            logout();
             navigate('/');
         }
     };

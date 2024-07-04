@@ -109,8 +109,6 @@ const MobileReservationTimeSelector = () => {
                     startTime.setMinutes(startTime.getMinutes() + 30);
                     continue;
                 }
-                console.log(localEndOfWork);
-                console.log(adjustTimeForTimezone(timeSlotEndTime));
                 slots.push(localStartTime);
             }
             startTime.setMinutes(startTime.getMinutes() + 30);

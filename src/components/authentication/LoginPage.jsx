@@ -44,12 +44,11 @@ const LoginPage = () => {
     };
 
     return (
-        <Box>
-            <Typography variant="h5" style={{ margin: 20 }}>Nailsbyliz (in development)</Typography>
-            <Typography style={{ marginLeft: 20, marginBottom: 20 }}>Kirjaudu sovellukseen </Typography>
-            <Box component='form' onSubmit={handleSubmit} sx={{ margin: 2 }}>
+        <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+            <Typography variant="h5" sx={{ margin: 2 }}>Nailsbyliz (in development)</Typography>
+            <Typography sx={{ margin: 2 }}>Kirjaudu sovellukseen</Typography>
+            <Box component='form' onSubmit={handleSubmit} sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', margin: 2 }}>
                 <TextField
-                    style={{ marginRight: 6, marginBottom: 6 }}
                     autoFocus
                     required
                     name="username"
@@ -57,7 +56,8 @@ const LoginPage = () => {
                     id="username"
                     autoComplete="username"
                     value={user.username}
-                    onChange={e => handleChange(e)}
+                    onChange={handleChange}
+                    sx={{ marginBottom: 2, width: '100%', maxWidth: 400 }}
                 />
                 <TextField
                     required
@@ -67,13 +67,14 @@ const LoginPage = () => {
                     type="password"
                     autoComplete="current-password"
                     value={user.password}
-                    onChange={e => handleChange(e)}
+                    onChange={handleChange}
+                    sx={{ marginBottom: 2, width: '100%', maxWidth: 400 }}
                 />
-                <Button style={{ marginLeft: 6 }} variant="contained" type="submit">
+                <Button variant="contained" type="submit" sx={{ width: '100%', maxWidth: 400 }}>
                     Kirjaudu
                 </Button>
             </Box>
-            <Button style={{ marginLeft: 6 }} variant="contained" onClick={handleRegisterNavigation}>
+            <Button variant="contained" onClick={handleRegisterNavigation} sx={{ width: '100%', maxWidth: 400, marginTop: 2 }}>
                 Rekisteröidy
             </Button>
         </Box>
