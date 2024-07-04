@@ -16,7 +16,7 @@ export default function FrontPage() {
 
     return (
         <div style={styles.container}>
-            <h1>NailsByLiz.fi</h1>
+            <h2>NailsByLiz.fi</h2>
             {authToken && <h3>Hei {fname}!</h3>}
             <p style={styles.description}>
                 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.

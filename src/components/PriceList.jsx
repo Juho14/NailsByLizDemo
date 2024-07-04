@@ -1,11 +1,28 @@
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import { IconButton, useMediaQuery } from '@mui/material';
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useNailServices } from './nailservices/NailServiceContext';
+
 
 export default function PriceList() {
     const { nailServices, isLoading, error } = useNailServices();
+    const isMobile = useMediaQuery((theme) => theme.breakpoints.down('md'));
+    const navigate = useNavigate();
+
+    const handleGoBack = () => {
+        navigate(-1)
+    }
 
     return (
         <div style={styles.container}>
+            {isMobile && (
+                <div style={{ position: 'absolute', top: 0, right: 0 }}>
+                    <IconButton onClick={handleGoBack}>
+                        <ArrowBackIcon />
+                    </IconButton>
+                </div>
+            )}
             <h2>Hinnasto</h2>
             {isLoading ? (
                 <p>Loading...</p>

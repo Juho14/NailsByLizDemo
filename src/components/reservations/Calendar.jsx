@@ -1,4 +1,3 @@
-import { CircularProgress } from '@mui/material';
 import moment from 'moment';
 import React, { useEffect, useState } from 'react';
 import { Calendar, momentLocalizer } from 'react-big-calendar';
@@ -8,6 +7,7 @@ import { fetchReservations } from '../../fetches/ReservationFetch';
 import { fetchActiveReservationSetting } from '../../fetches/ReservationSettingsFetch';
 import { formatTimeHHMM } from '../TimeFormatting/TimeFormats';
 import { useAuth } from '../authentication/AuthProvider';
+import LoadingPlaceholder from '../errorhandling/LoadingPlaceholder';
 
 const localizer = momentLocalizer(moment);
 
@@ -61,7 +61,7 @@ const AdminCalendar = () => {
 
     useEffect(() => {
         const handleResize = () => {
-            setIsMobile(window.innerWidth <= 950); // Adjust breakpoint as needed
+            setIsMobile(window.innerWidth <= 950);
         };
 
         // Initial check
@@ -78,13 +78,13 @@ const AdminCalendar = () => {
 
     const adjustTimeForTimezone = (time) => {
         const date = new Date(time);
-        const timezoneOffset = date.getTimezoneOffset() * 60000; // Convert minutes to milliseconds
+        const timezoneOffset = date.getTimezoneOffset() * 60000;
         const localTime = new Date(date.getTime() - timezoneOffset);
         return localTime;
     };
 
     const handleReservationClick = (reservationId) => {
-        navigate(`/reservation-details/${reservationId}`); // Navigate to reservation details page
+        navigate(`/reservation-details/${reservationId}`);
     };
 
     const events = reservations
@@ -93,7 +93,7 @@ const AdminCalendar = () => {
             title: isMobile ? formatTimeHHMM(reservation.startTime) : `${reservation.nailService ? reservation.nailService.type : "Poistettu palvelu"} - ${formatTimeHHMM(reservation.startTime)}`,
             start: new Date(reservation.startTime),
             end: new Date(reservation.endTime),
-            id: reservation.id, // Include reservation id in event data
+            id: reservation.id,
         }));
 
     const minTime = reservationSetting ? moment(reservationSetting.startTime, 'HH:mm:ss').toDate() : null;
@@ -110,7 +110,8 @@ const AdminCalendar = () => {
             opacity: 1,
             color: 'white',
             border: '0px',
-            display: 'block'
+            display: 'block',
+            fontSize: isMobile ? '0.8rem' : '1rem'
         };
         return {
             style
@@ -119,10 +120,7 @@ const AdminCalendar = () => {
 
     if (isLoading) {
         return (
-            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '90vh' }}>
-                <CircularProgress />
-                <div>Lataa...</div>
-            </div>
+            <LoadingPlaceholder />
         );
     }
 
@@ -134,12 +132,12 @@ const AdminCalendar = () => {
                 step={30}
                 startAccessor="start"
                 endAccessor="end"
-                style={{ height: isMobile ? 400 : 800, width: isMobile ? '100%' : 1600 }} // Adjust height and width based on isMobile
+                style={{ height: isMobile ? '80vh' : 800, width: isMobile ? 400 : 1600 }}
                 min={adjustTimeForTimezone(minTime)}
                 max={adjustTimeForTimezone(maxTime)}
                 weekday={1}
                 eventPropGetter={eventStyleGetter}
-                onSelectEvent={(event) => handleReservationClick(event.id)} // Call handleReservationClick on event selection
+                onSelectEvent={(event) => handleReservationClick(event.id)}
             />
         </div>
     );

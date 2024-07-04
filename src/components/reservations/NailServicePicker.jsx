@@ -1,3 +1,4 @@
+import { useMediaQuery } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import { fetchNailServices } from '../../fetches/NailServiceFetch';
 import { useAuth } from '../authentication/AuthProvider';
@@ -8,6 +9,7 @@ const NailServicePicker = ({ onSelectNailService }) => {
     const [selectedNailService, setSelectedNailService] = useState(null);
     const { token } = useAuth();
     const [isLoading, setIsLoading] = useState(false);
+    const isMobile = useMediaQuery((theme) => theme.breakpoints.down('md'));
 
     useEffect(() => {
         setIsLoading(true);
@@ -21,7 +23,7 @@ const NailServicePicker = ({ onSelectNailService }) => {
             })
             .catch((err) => console.error(err));
         setIsLoading(false);
-    }, []);
+    }, [token, onSelectNailService]);
 
     const handleFieldChange = (event) => {
         const value = parseInt(event.target.value);
@@ -31,16 +33,17 @@ const NailServicePicker = ({ onSelectNailService }) => {
     };
 
     if (isLoading) {
-        return <LoadingPlaceholder />
+        return <LoadingPlaceholder />;
     }
 
     const styles = {
         picker: {
-            fontSize: '1.2em',
+            fontSize: isMobile ? '1em' : '1.2em',
             padding: '10px',
+            width: '100%',
+            borderRadius: isMobile ? 50 : 100,
         },
     };
-
     return (
         <div>
             <select value={selectedNailService ? selectedNailService.id : ''} onChange={handleFieldChange} style={styles.picker}>

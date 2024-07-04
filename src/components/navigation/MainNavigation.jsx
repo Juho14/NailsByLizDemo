@@ -4,7 +4,6 @@ import { useAuth } from '../authentication/AuthProvider';
 import AdminNavigator from './AdminNavigator';
 import CustomerMobileNavigator from './CustomerMobileNavigator';
 import CustomerNavigator from './CustomerNavigator';
-import PrivateDevelopmentNavi from './PrivateDevelopmentNavi';
 
 const MainNavigation = () => {
     const { authToken, userRole } = useAuth();
@@ -14,12 +13,10 @@ const MainNavigation = () => {
     const renderNavigation = () => {
         if (authToken && userRole === 'ROLE_ADMIN') {
             return <AdminNavigator />;
-        } else if (authToken && userRole) {
+        } else {
             if (isMobile) {
                 return <CustomerMobileNavigator />
             } else { return <CustomerNavigator />; }
-        } else {
-            return <PrivateDevelopmentNavi />
         }
     };
 

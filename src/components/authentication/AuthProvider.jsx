@@ -91,6 +91,7 @@ const AuthProvider = ({ children }) => {
             setFname(null);
             setUsername(null);
             setExpTime(null);
+            setShowAlert(false);
             navigate('/login', { replace: true });
         }, 5000); // Navigate after 5 seconds
     };
@@ -139,11 +140,11 @@ export default AuthProvider;
 const alertStyles = {
     alert: {
         position: 'fixed',
-        top: '10px',
+        top: '50px',
         left: '50%',
         transform: 'translateX(-50%)',
-        width: '80%', // Adjust the width as needed
-        maxWidth: '600px', // Ensure it doesn't get too large on wider screens
+        width: '40%', // Adjust the width as needed
+        maxWidth: '400px', // Ensure it doesn't get too large on wider screens
         zIndex: 1000,
         textAlign: 'center',
         fontSize: '1.2em', // Make the text larger

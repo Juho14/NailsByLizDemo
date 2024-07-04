@@ -126,6 +126,10 @@ const MobileReservationTimeSelector = () => {
         navigate(-1);
     };
 
+    const capitalizeFirstLetter = (string) => {
+        return string.charAt(0).toUpperCase() + string.slice(1);
+    }
+
     if (isLoading || !reservationSettings || !reservationSettings.startTime || !reservationSettings.endTime || nailServiceDuration === 0) {
         return (
             <div>
@@ -160,7 +164,10 @@ const MobileReservationTimeSelector = () => {
             </div>
 
             <h2>Valitse aika</h2>
-            <h2>{formatDateLocale(reservationDate)}</h2>
+            <h2>{capitalizeFirstLetter(reservationDate.toLocaleString('fi-FI', { weekday: 'long' }))}, {formatDateLocale(reservationDate)}</h2>
+            <div style={{ fontWeight: 'bold' }}>
+
+            </div>
             <div style={{ height: '400px', overflowY: 'auto' }}>
                 {timeSlots.length === 0 ? (
                     <div style={{ textAlign: 'center', marginTop: '20px', fontSize: '1.2em' }}>Ei vapaita aikoja</div>
