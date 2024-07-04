@@ -128,13 +128,13 @@ const ReservationTimeSelector = () => {
     };
 
     const generateTimeSlots = (formattedDate) => {
-        if (!reservationSettings) {
+        if (!reservationSettings || !reservations) {
             return [];
         }
 
-        const formattedStartDate = new Date(formattedDate + 'T00:00:00Z');
-        const formattedEndDate = new Date(formattedDate + 'T23:59:59Z');
-
+        const formattedStartDate = new Date(`${formattedDate}T00:00:00Z`);
+        const formattedEndDate = new Date(`${formattedDate}T23:59:59Z`);
+        const localEndOfWork = adjustTimeForTimezone(new Date(`${formattedDate}T16:00:00Z`));
         const timeSlots = [];
         const startTime = new Date(`${formattedDate}T${reservationSettings.startTime}`);
         const endTime = new Date(`${formattedDate}T${reservationSettings.endTime}`);
@@ -143,26 +143,31 @@ const ReservationTimeSelector = () => {
             let timeSlotEndTime = new Date(startTime.getTime() + (nailServiceDuration * 60000));
             let overlapsWithReservation = false;
             let lastReservationEndTime = new Date();
-            let localStartTime = adjustTimeForTimezone(startTime);
+
             for (let i = 0; i < reservations.length; i++) {
                 const reservationObject = reservations[i];
                 if (reservationObject.status !== "OK") {
                     continue;
                 }
-                if (reservationObject.id == reservationId) {
+                if (reservationObject.id === reservationId) {
                     continue;
                 }
                 const reservationStartTime = new Date(reservationObject.startTime);
                 const reservationEndTime = new Date(reservationObject.endTime);
 
                 if (startTime < reservationEndTime && timeSlotEndTime >= reservationStartTime) {
+                    console.log(reservationEndTime);
                     overlapsWithReservation = true;
                     lastReservationEndTime = reservationEndTime;
                     break;
                 }
             }
-            if (!overlapsWithReservation && startTime >= formattedStartDate && timeSlotEndTime <= formattedEndDate) {
-                timeSlots.push(localStartTime);
+
+            // Check if the time slot fits within the current day and does not overlap
+            if (!overlapsWithReservation && startTime >= formattedStartDate) {
+                if (userRole === 'ROLE_ADMIN' || (timeSlotEndTime <= formattedEndDate && adjustTimeForTimezone(timeSlotEndTime) <= localEndOfWork)) {
+                    timeSlots.push(adjustTimeForTimezone(startTime));
+                }
             } else {
                 if (!overlapsWithReservation) {
                     startTime.setMinutes(startTime.getMinutes() + 30);
@@ -170,10 +175,13 @@ const ReservationTimeSelector = () => {
                     startTime.setTime(lastReservationEndTime.getTime());
                 }
             }
-            startTime.setMinutes(startTime.getMinutes() + 30);
+
+            startTime.setMinutes(startTime.getMinutes() + 30); // Move to the next 30-minute slot
         }
+
         return timeSlots;
     };
+
 
     const handleNextWeek = () => {
         const nextMonday = getMonday(new Date(reservationDate));

@@ -239,12 +239,20 @@ export const cancelReservation = (id, authToken, accessToken) => {
 };
 
 
-export const deleteReservation = (reservationId) => {
+export const deleteReservation = (reservationId, authToken, accessToken) => {
+    const headers = {
+        'Content-Type': 'application/json'
+    };
+
+    if (authToken) {
+        headers['Auth-Token'] = `Bearer ${authToken}`;
+    }
+    if (accessToken) {
+        headers['Access-Token'] = `Bearer ${accessToken}`;
+    }
     return fetch(import.meta.env.VITE_API_URL + "reservations/" + reservationId, {
         method: 'DELETE',
-        headers: {
-            'Content-Type': 'application/json'
-        },
+        headers: headers,
     })
         .then(response => {
             if (response.status === 204) {

@@ -246,9 +246,9 @@ const ReservationDialog = () => {
             ) : selectedNailService ? (
                 <>
                     {id ? (
-                        <h1>Muokkaa varausta</h1>
+                        <h2>Muokkaa varausta</h2>
                     ) : (
-                        <h1>Viimeistele varaus</h1>
+                        <h2>Viimeistele varaus</h2>
                     )}
                     {id ? (
                         <>

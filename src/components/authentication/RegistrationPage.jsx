@@ -37,7 +37,7 @@ const RegistrationPage = () => {
             register(user)
                 .then(response => {
                     if (response.success) {
-                        alert("Rekisteröinti onnistui")
+                        alert("Rekisteröinti onnistui");
                         navigate("/login", { replace: true });
                     } else {
                         throw new Error("Registration failed");
@@ -56,49 +56,52 @@ const RegistrationPage = () => {
     };
 
     return (
-        <Box>
-            <Typography variant="h5" style={{ margin: 20 }}>Nailsbyliz</Typography>
-            <Typography style={{ marginLeft: 20, marginBottom: 20 }}>Rekisteröidy sovellukseen </Typography>
-            <Box component='form' onSubmit={handleSubmit} sx={{ margin: 2 }}>
+        <Box sx={{ width: '100%', maxWidth: 500, mx: 'auto', mt: 5 }}>
+            <Typography variant="h5" sx={{ mb: 2 }}>Nailsbyliz</Typography>
+            <Typography sx={{ mb: 3 }}>Rekisteröidy sovellukseen</Typography>
+            <Box component='form' onSubmit={handleSubmit}>
                 <TextField
-                    style={{ marginRight: 6, marginBottom: 6 }}
-                    autoFocus
+                    fullWidth
                     required
                     name="fname"
                     label="Etunimi"
                     id="fname"
                     value={user.fname}
                     onChange={handleChange}
+                    sx={{ mb: 2 }}
                 />
                 <TextField
-                    style={{ marginBottom: 6 }}
+                    fullWidth
                     required
                     name="lname"
                     label="Sukunimi"
                     id="lname"
                     value={user.lname}
                     onChange={handleChange}
+                    sx={{ mb: 2 }}
                 />
                 <TextField
-                    style={{ marginRight: 6, marginBottom: 6 }}
+                    fullWidth
                     required
                     name="username"
                     label="Käyttäjänimi"
                     id="username"
                     value={user.username}
                     onChange={handleChange}
+                    sx={{ mb: 2 }}
                 />
                 <TextField
-                    style={{ marginBottom: 6 }}
+                    fullWidth
                     required
                     name="phone"
                     label="Puhelinnumero"
                     id="phone"
                     value={user.phone}
                     onChange={handleChange}
+                    sx={{ mb: 2 }}
                 />
                 <TextField
-                    style={{ marginRight: 6, marginBottom: 6 }}
+                    fullWidth
                     required
                     name="email"
                     label="Sähköposti"
@@ -106,40 +109,45 @@ const RegistrationPage = () => {
                     type="email"
                     value={user.email}
                     onChange={handleChange}
+                    sx={{ mb: 2 }}
                 />
                 <TextField
-                    style={{ marginBottom: 6 }}
+                    fullWidth
                     required
                     name="address"
                     label="Osoite"
                     id="address"
                     value={user.address}
                     onChange={handleChange}
+                    sx={{ mb: 2 }}
                 />
                 <TextField
-                    style={{ marginRight: 6, marginBottom: 6 }}
+                    fullWidth
                     required
                     name="postalcode"
                     label="Postinumero"
                     id="postalcode"
                     value={user.postalcode}
                     onChange={handleChange}
+                    sx={{ mb: 2 }}
                 />
                 <TextField
-                    style={{ marginBottom: 6 }}
+                    fullWidth
                     required
                     name="city"
                     label="Kaupunki"
                     id="city"
                     value={user.city}
                     onChange={handleChange}
+                    sx={{ mb: 2 }}
                 />
                 {errorMessage && (
-                    <Typography color="error" style={{ marginBottom: 6 }}>
+                    <Typography color="error" sx={{ mb: 2 }}>
                         {errorMessage}
                     </Typography>
                 )}
                 <TextField
+                    fullWidth
                     required
                     name="passwordHash"
                     label="Salasana"
@@ -147,8 +155,10 @@ const RegistrationPage = () => {
                     type="password"
                     value={user.passwordHash}
                     onChange={handleChange}
+                    sx={{ mb: 2 }}
                 />
                 <TextField
+                    fullWidth
                     required
                     name="passwordConfirm"
                     label="Vahvista Salasana"
@@ -156,13 +166,14 @@ const RegistrationPage = () => {
                     type="password"
                     value={passwordConfirm}
                     onChange={handlePasswordConfirmChange}
+                    sx={{ mb: 2 }}
                 />
-                <Button style={{ marginLeft: 6 }} variant="contained" type="submit">
+                <Button variant="contained" type="submit">
                     Rekisteröidy
                 </Button>
             </Box>
         </Box>
-    )
-}
+    );
+};
 
 export default RegistrationPage;

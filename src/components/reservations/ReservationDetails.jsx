@@ -54,7 +54,7 @@ const ReservationDetails = () => {
 
     const handlePressDelete = (id) => {
         if (window.confirm('Are you sure?')) {
-            deleteReservation(id)
+            deleteReservation(id, authToken, accessToken)
                 .then(() => {
                     navigate('/reservations');
                 })
@@ -94,6 +94,7 @@ const ReservationDetails = () => {
             <p><strong>Palvelun hinta:</strong> {reservation.nailService ? reservation.nailService.price : "Poistettu"}</p>
             <p><strong>Varauksen hinta:</strong> {reservation.price}</p>
             <p><strong>Päivämäärä:</strong> {formatDateLocale(new Date(reservation.startTime))}</p>
+            {formatDateLocale(new Date(reservation.startTime)) === formatDateLocale(new Date(reservation.endTime)) ? (null) : (<p><strong>Loppu:</strong> {formatDateLocale(new Date(reservation.endTime))}</p>)}
             <p><strong>Varattu aika:</strong> {formatReservationTimeslot(reservation)}</p>
             <p><strong>Status:</strong> {reservation.status}</p>
 

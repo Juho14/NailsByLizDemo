@@ -7,13 +7,13 @@ import LoadingPlaceholder from '../errorhandling/LoadingPlaceholder';
 const NailServicePicker = ({ onSelectNailService }) => {
     const [nailServices, setNailServices] = useState([]);
     const [selectedNailService, setSelectedNailService] = useState(null);
-    const { token } = useAuth();
+    const { authToken, accessToken } = useAuth();
     const [isLoading, setIsLoading] = useState(false);
     const isMobile = useMediaQuery((theme) => theme.breakpoints.down('md'));
 
     useEffect(() => {
         setIsLoading(true);
-        fetchNailServices(token)
+        fetchNailServices(authToken, accessToken)
             .then((data) => {
                 setNailServices(data);
                 if (data.length > 0) {
@@ -23,7 +23,7 @@ const NailServicePicker = ({ onSelectNailService }) => {
             })
             .catch((err) => console.error(err));
         setIsLoading(false);
-    }, [token, onSelectNailService]);
+    }, [authToken]);
 
     const handleFieldChange = (event) => {
         const value = parseInt(event.target.value);
