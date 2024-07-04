@@ -48,6 +48,7 @@ const ReservationDialog = () => {
     const [openDialog, setOpenDialog] = useState(false);
     const [selectedTime, setSelectedTime] = useState(null);
 
+    const [validationErrors, setValidationErrors] = useState({});
 
     const handleSelectTimePress = () => {
         if (selectedNailService) {
@@ -71,10 +72,9 @@ const ReservationDialog = () => {
         // Format the combined date and time
         const formattedDateTime = combinedDateTime.toISOString();
         return formattedDateTime;
-    }
+    };
 
     useEffect(() => {
-
         if (!id) {
             setSelectedTime(formatParamTime());
         }
@@ -175,7 +175,38 @@ const ReservationDialog = () => {
         }));
     };
 
+    const validateForm = () => {
+        const errors = {};
+        if (!reservation.fname) errors.fname = 'Etunimi vaaditaan';
+        if (!reservation.lname) errors.lname = 'Sukunimi vaaditaan';
+        if (!reservation.email) {
+            errors.email = 'Sähköposti vaaditaan';
+        } else if (!/\S+@\S+\.\S+/.test(reservation.email)) {
+            errors.email = 'Sähköpostiosoite on virheellinen';
+        }
+        if (!reservation.phone) {
+            errors.phone = 'Puhelinnumero vaaditaan';
+        } else if (!/^\+?\d{10,}$/.test(reservation.phone)) {
+            errors.phone = 'Puhelinnumeron on virheellinen';
+        }
+        if (!reservation.address) {
+            errors.address = 'Osoite vaaditaan';
+        } else if (reservation.address.length < 5) {
+            errors.address = 'Osoitteen on oltava vähintään 5 kirjainta';
+        }
+        if (!reservation.city) errors.city = 'Kaupunki vaaditaan';
+        if (!reservation.postalcode) {
+            errors.postalcode = 'Postinumero vaaditaan';
+        } else if (!/^\d{5}$/.test(reservation.postalcode)) {
+            errors.postalcode = 'Postinumeron on virheellinen';
+        }
+        setValidationErrors(errors);
+        return Object.keys(errors).length === 0;
+    };
+
     const handleSaveReservation = () => {
+        if (!validateForm()) return;
+
         const updatedReservation = {
             ...reservation,
             startTime: time ? selectedTime : `${formatDateBackend(new Date(reservation.startTime))}T${formatTimeHHMM(reservation.startTime)}:00.000Z`,
@@ -189,14 +220,14 @@ const ReservationDialog = () => {
             });
         } else {
             saveReservation(updatedReservation).then(() => {
-                navigate(authToken ? (userRole === "ROLE_ADMIN" ? (isMobile ? "/reservations/1" : "/reservations") : "/my-reservations") : ('/'))
+                navigate(authToken ? (userRole === "ROLE_ADMIN" ? (isMobile ? "/reservations/1" : "/reservations") : "/my-reservations") : ('/'));
             });
         }
     };
 
     const handleCancel = () => {
         navigate(-1);
-    }
+    };
 
     const styles = {
         textField: {
@@ -237,6 +268,7 @@ const ReservationDialog = () => {
             padding: '32px',
         },
     };
+
     return (
         <>
             <Dialog open={openDialog} onClose={() => handleDialogClose(false)}>
@@ -317,6 +349,9 @@ const ReservationDialog = () => {
                             value={reservation.fname}
                             onChange={(e) => handleChange(e, 'fname')}
                             fullWidth
+                            required
+                            error={!!validationErrors.fname}
+                            helperText={validationErrors.fname}
                             sx={{
                                 ...styles.textField,
                                 '& .MuiInputLabel-root': styles.label,
@@ -327,6 +362,9 @@ const ReservationDialog = () => {
                             value={reservation.lname}
                             onChange={(e) => handleChange(e, 'lname')}
                             fullWidth
+                            required
+                            error={!!validationErrors.lname}
+                            helperText={validationErrors.lname}
                             sx={{
                                 ...styles.textField,
                                 '& .MuiInputLabel-root': styles.label,
@@ -337,6 +375,9 @@ const ReservationDialog = () => {
                             value={reservation.email}
                             onChange={(e) => handleChange(e, 'email')}
                             fullWidth
+                            required
+                            error={!!validationErrors.email}
+                            helperText={validationErrors.email}
                             sx={{
                                 ...styles.textField,
                                 '& .MuiInputLabel-root': styles.label,
@@ -347,6 +388,9 @@ const ReservationDialog = () => {
                             value={reservation.phone}
                             onChange={(e) => handleChange(e, 'phone')}
                             fullWidth
+                            required
+                            error={!!validationErrors.phone}
+                            helperText={validationErrors.phone}
                             sx={{
                                 ...styles.textField,
                                 '& .MuiInputLabel-root': styles.label,
@@ -357,6 +401,9 @@ const ReservationDialog = () => {
                             value={reservation.address}
                             onChange={(e) => handleChange(e, 'address')}
                             fullWidth
+                            required
+                            error={!!validationErrors.address}
+                            helperText={validationErrors.address}
                             sx={{
                                 ...styles.textField,
                                 '& .MuiInputLabel-root': styles.label,
@@ -367,6 +414,9 @@ const ReservationDialog = () => {
                             value={reservation.city}
                             onChange={(e) => handleChange(e, 'city')}
                             fullWidth
+                            required
+                            error={!!validationErrors.city}
+                            helperText={validationErrors.city}
                             sx={{
                                 ...styles.textField,
                                 '& .MuiInputLabel-root': styles.label,
@@ -377,6 +427,9 @@ const ReservationDialog = () => {
                             value={reservation.postalcode}
                             onChange={(e) => handleChange(e, 'postalcode')}
                             fullWidth
+                            required
+                            error={!!validationErrors.postalcode}
+                            helperText={validationErrors.postalcode}
                             sx={{
                                 ...styles.textField,
                                 '& .MuiInputLabel-root': styles.label,
@@ -390,6 +443,9 @@ const ReservationDialog = () => {
                                     onChange={(e) => handleChange(e, 'price')}
                                     fullWidth
                                     InputLabelProps={{ shrink: true }}
+                                    required
+                                    error={!!validationErrors.price}
+                                    helperText={validationErrors.price}
                                     sx={{
                                         ...styles.textField,
                                         '& .MuiInputLabel-root': styles.label,
@@ -401,6 +457,9 @@ const ReservationDialog = () => {
                                     onChange={(e) => handleChange(e, 'status')}
                                     fullWidth
                                     InputLabelProps={{ shrink: true }}
+                                    required
+                                    error={!!validationErrors.status}
+                                    helperText={validationErrors.status}
                                     sx={{
                                         ...styles.textField,
                                         '& .MuiInputLabel-root': styles.label,
