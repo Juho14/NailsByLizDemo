@@ -56,7 +56,7 @@ const ReservationDetails = () => {
         if (window.confirm('Are you sure?')) {
             deleteReservation(id, authToken, accessToken)
                 .then(() => {
-                    navigate('/reservations');
+                    navigate((isMobile ? '/reservations/1' : '/reservations'));
                 })
                 .catch(err => console.error(err));
         }
@@ -82,7 +82,7 @@ const ReservationDetails = () => {
                 </div>
             ) : null}
             <h2>Varauksen tiedot</h2>
-            <p><strong>Asiakan tunniste:</strong> {reservation.customerId || "Ei käyttäjää"}</p>
+            <p><strong>Asiakkaan tunniste:</strong> {reservation.customerId || "Ei käyttäjää"}</p>
             <p><strong>Etunimi:</strong> {reservation.fname}</p>
             <p><strong>Sukunimi:</strong> {reservation.lname}</p>
             <p><strong>Sähköposti:</strong> {reservation.email}</p>
