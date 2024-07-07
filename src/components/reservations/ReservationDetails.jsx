@@ -59,7 +59,12 @@ const ReservationDetails = () => {
         if (window.confirm('Are you sure?')) {
             deleteReservation(id, authToken, accessToken)
                 .then(() => {
-                    navigate((isMobile ? '/reservations/1' : '/reservations'));
+                    alert("Varaus poistettu!")
+                    if (reservation.customerId) {
+                        navigate("/reservations/customer/" + reservation.customerId);
+                    } else {
+                        navigate((isMobile ? '/reservations/1' : '/reservations'));
+                    }
                 })
                 .catch(err => console.error(err));
         }
