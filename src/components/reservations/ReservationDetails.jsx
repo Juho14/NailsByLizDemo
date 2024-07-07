@@ -2,7 +2,7 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { Button, IconButton, useMediaQuery } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { deleteReservation, fetchSpecificReservation } from '../../fetches/ReservationFetch';
+import { cancelReservation, deleteReservation, fetchSpecificReservation } from '../../fetches/ReservationFetch';
 import { formatDateLocale, formatReservationTimeslot } from '../TimeFormatting/TimeFormats';
 import { useAuth } from '../authentication/AuthProvider';
 import LoadingPlaceholder from '../errorhandling/LoadingPlaceholder';
@@ -43,6 +43,9 @@ const ReservationDetails = () => {
     if (!reservation) {
         return <div>No reservation found.</div>;
     }
+    const startTime = new Date(reservation.startTime);
+    const currentTime = new Date();
+    const timeDifference = (startTime - currentTime) / (1000 * 60 * 60);
 
     const handleReservationListClick = () => {
         navigate(`/reservations`);
@@ -59,6 +62,24 @@ const ReservationDetails = () => {
                     navigate((isMobile ? '/reservations/1' : '/reservations'));
                 })
                 .catch(err => console.error(err));
+        }
+    };
+
+    const handleCancelReservation = async (id) => {
+        const confirmed = window.confirm("Haluatko varmasti perua varauksen?");
+
+        if (confirmed) {
+            try {
+                const response = await cancelReservation(id, authToken, accessToken);
+                if (response.success) {
+                    alert("Varaus peruttu.");
+                    window.location.reload();
+                } else {
+                    alert("Failed to cancel reservation");
+                }
+            } catch (error) {
+                alert(error.message);
+            }
         }
     };
 
@@ -113,6 +134,12 @@ const ReservationDetails = () => {
             </div>
 
             <EditReservation reservation={reservation} />
+            {reservation.status === "Peruttu" ? (null) :
+                (timeDifference > 24 ? (
+                    <Button variant="contained" onClick={() => handleCancelReservation(reservation.id)}>Peru varaus</Button>
+                ) : (
+                    <Button variant="contained" onClick={() => handleCancelReservation(reservation.id)}>Peru varaus, alle 24h varaukseen!</Button>
+                ))}
             <Button variant="contained" color="secondary" style={{ fontSize: '18px', margin: '2px' }} onClick={() => handlePressDelete(reservation.id)}>
                 Poista
             </Button>

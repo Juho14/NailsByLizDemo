@@ -216,11 +216,13 @@ const ReservationDialog = () => {
         };
         if (id) {
             updateReservation(updatedReservation, id, authToken, accessToken).then(() => {
+                alert("Muutokset tallennettu!");
                 navigate(`/reservation-details/${id}`);
             });
         } else {
             saveReservation(updatedReservation).then(() => {
                 navigate(authToken ? (userRole === "ROLE_ADMIN" ? (isMobile ? "/reservations/1" : "/reservations") : "/my-reservations") : ('/'));
+                alert("Varaus tallennettu!");
             });
         }
     };
