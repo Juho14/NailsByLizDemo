@@ -36,16 +36,20 @@ export default function CurrentUserReservations() {
     }, [authToken]);
 
     const handleCancelReservation = async (id) => {
-        try {
-            const response = await cancelReservation(id, authToken, accessToken);
-            if (response.success) {
-                setReservations(prevReservations => prevReservations.filter(reservation => reservation.id !== id));
-                alert("Varaus peruttu.");
-            } else {
-                setCancelError("Failed to cancel reservation");
+        const confirmed = window.confirm("Haluatko varmasti perua varauksen?");
+
+        if (confirmed) {
+            try {
+                const response = await cancelReservation(id, authToken, accessToken);
+                if (response.success) {
+                    setReservations(prevReservations => prevReservations.filter(reservation => reservation.id !== id));
+                    alert("Varaus peruttu.");
+                } else {
+                    setCancelError("Failed to cancel reservation");
+                }
+            } catch (error) {
+                setCancelError(error.message);
             }
-        } catch (error) {
-            setCancelError(error.message);
         }
     };
 

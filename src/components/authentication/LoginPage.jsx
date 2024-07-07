@@ -8,6 +8,7 @@ const LoginPage = () => {
     const { setAuthToken, setAccessToken } = useAuth();
     const navigate = useNavigate();
     const [user, setUser] = useState({ username: '', password: '' });
+    const [errorMessage, setErrorMessage] = useState(null);
 
     const handleChange = (e) => {
         setUser({ ...user, [e.target.name]: e.target.value })
@@ -19,15 +20,16 @@ const LoginPage = () => {
                 if (response.ok) {
                     const authToken = response.headers.get('Authorization');
                     const newAccessToken = response.headers.get('Access-Token');
-
                     if (authToken && newAccessToken) {
                         setAuthToken(authToken.replace('Bearer ', ''));
                         setAccessToken(newAccessToken.replace('Bearer ', ''));
                         navigate("/", { replace: true });
                     } else {
+                        setErrorMessage("Virhe kirjautumisessa, yritä uudelleen.")
                         throw new Error("Tokens not found in response");
                     }
                 } else {
+                    setErrorMessage("Kirjautuminen epäonnistui, tarkista tiedot!")
                     throw new Error("Error in fetch: " + response.statusText);
                 }
             })
@@ -70,13 +72,14 @@ const LoginPage = () => {
                     onChange={handleChange}
                     sx={{ marginBottom: 2, width: '100%', maxWidth: 400 }}
                 />
+                {errorMessage ? <p style={{ color: 'red', fontWeight: 'bold' }}>{errorMessage}</p> : null}
                 <Button variant="contained" type="submit" sx={{ width: '100%', maxWidth: 400 }}>
                     Kirjaudu
                 </Button>
+                <Button variant="contained" onClick={handleRegisterNavigation} sx={{ width: '100%', maxWidth: 400, marginTop: 2 }}>
+                    Rekisteröidy
+                </Button>
             </Box>
-            <Button variant="contained" onClick={handleRegisterNavigation} sx={{ width: '100%', maxWidth: 400, marginTop: 2 }}>
-                Rekisteröidy
-            </Button>
         </Box>
     );
 };
