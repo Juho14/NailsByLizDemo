@@ -289,7 +289,7 @@ const ReservationTimeSelector = () => {
                             <Button variant="contained" style={{ border: '1px solid black', marginRight: '5px' }} onClick={handlePreviousWeek}>
                                 Edellinen viikko
                             </Button>
-                        ) : !isCurrentWeek ? (
+                        ) : !isCurrentWeek || userRole === "ROLE_ADMIN" ? (
                             <Button variant="contained" style={{ border: '1px solid black', marginRight: '5px' }} onClick={handlePreviousWeek}>
                                 Edellinen viikko
                             </Button>

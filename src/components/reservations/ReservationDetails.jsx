@@ -56,7 +56,7 @@ const ReservationDetails = () => {
     };
 
     const handlePressDelete = (id) => {
-        if (window.confirm('Are you sure?')) {
+        if (window.confirm('Haluatko varmasti poistaa varauksen?')) {
             deleteReservation(id, authToken, accessToken)
                 .then(() => {
                     alert("Varaus poistettu!")

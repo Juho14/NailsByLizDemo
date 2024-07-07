@@ -158,7 +158,7 @@ const MobileReservationTimeSelector = () => {
                 </IconButton>
             </div>
             <div style={{ marginBottom: '10px', display: 'flex', justifyContent: 'flex-start' }}>
-                {dateIsValid ? (
+                {dateIsValid || userRole === "ROLE_ADMIN" ? (
                     <Button variant="contained" style={{ border: '1px solid black', marginRight: '5px' }} onClick={handlePreviousDay}>
                         Edellinen päivä
                     </Button>
