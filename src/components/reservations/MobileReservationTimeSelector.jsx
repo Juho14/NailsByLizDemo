@@ -5,7 +5,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { fetchReservationsOfDay } from '../../fetches/ReservationFetch';
 import { adjustTimeForTimezone, formatDateBackend, formatDateLocale, formatTimeHHMM } from '../TimeFormatting/TimeFormats';
 import { useAuth } from '../authentication/AuthProvider';
-import { useReservationSettings } from '../reservationsettings/ReservationSettingsContex';
+import { useReservationSettings } from '../reservationsettings/ReservationSettingsContext';
 
 const MobileReservationTimeSelector = () => {
     const { date, duration, serviceId, reservationId, direction } = useParams();
