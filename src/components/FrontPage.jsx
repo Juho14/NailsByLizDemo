@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from './authentication/AuthProvider';
 import LoadingPlaceholder from './errorhandling/LoadingPlaceholder';
 import { useNailServices } from './nailservices/NailServiceContext';
-import { useReservationSettings } from './reservationsettings/ReservationSettingsContex';
+import { useReservationSettings } from './reservationsettings/ReservationSettingsContext';
 
 export default function FrontPage() {
     const { authToken, fname } = useAuth();
