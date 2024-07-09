@@ -3,85 +3,50 @@ import { Button, IconButton } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { fetchReservationsOfDay } from '../../fetches/ReservationFetch';
-import { fetchActiveReservationSetting } from '../../fetches/ReservationSettingsFetch';
 import { adjustTimeForTimezone, formatDateBackend, formatDateLocale, formatTimeHHMM } from '../TimeFormatting/TimeFormats';
 import { useAuth } from '../authentication/AuthProvider';
-import LoadingPlaceholder from '../errorhandling/LoadingPlaceholder';
+import { useReservationSettings } from '../reservationsettings/ReservationSettingsContex';
 
 const MobileReservationTimeSelector = () => {
-    const { date, duration, serviceId, reservationId } = useParams();
+    const { date, duration, serviceId, reservationId, direction } = useParams();
     const selectedDate = new Date(date);
     const nailServiceDuration = parseInt(duration);
+    const { activeReservationSetting } = useReservationSettings();
     const [reservationDate, setReservationDate] = useState(new Date(selectedDate));
-    const [reservationSettings, setReservationSettings] = useState(null);
     const [reservations, setReservations] = useState([]);
     const [fetchingError, setFetchingError] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
     const [dateIsValid, setDateIsValid] = useState(null);
     const [timeSlots, setTimeSlots] = useState([]);
     const { userRole } = useAuth();
-
     const navigate = useNavigate();
+    const [pageIsReady, setPageIsReady] = useState(false);
 
-    useEffect(() => {
-        const fetchData = async () => {
-            setIsLoading(true); // Set loading state to true when fetching starts
-            try {
-                const settingData = await fetchActiveReservationSetting();
-                setReservationSettings(settingData);
+    const fetchData = async () => {
+        setIsLoading(true); // Set loading state to true when fetching starts
+        try {
+            const formattedDate = formatDateBackend(reservationDate);
+            const reservationData = await fetchReservationsOfDay(formattedDate);
+            setReservations(reservationData);
 
-                const formattedDate = formatDateBackend(reservationDate);
-                const reservationData = await fetchReservationsOfDay(formattedDate);
-                setReservations(reservationData);
-
-                setFetchingError(null);
-            } catch (error) {
-                console.error('Error fetching data:', error);
-                setFetchingError(error.message);
-            } finally {
-                setIsLoading(false); // Set loading state to false when fetching completes (whether success or error)
-            }
-        };
-        fetchData();
-    }, [reservationDate]);
-
-    useEffect(() => {
-        setDateIsValid(dateIsPast(selectedDate));
-    }, [selectedDate]);
-
-    useEffect(() => {
-        const slots = generateTimeSlots();
-        setTimeSlots(slots);
-    }, [reservationDate, reservationSettings, reservations]);
-
-    const handleTimeSelected = (selectedTime) => {
-        const formattedDate = formatDateBackend(selectedTime); // Format the date part
-        const formattedTime = selectedTime.toISOString(); // Format the time part as ISO string
-
-        if (reservationId) {
-            navigate(`/edit-reservation/${reservationId}/${formattedDate}/${formattedTime}/${serviceId}`);
-        } else {
-            navigate(`/reservations/new/details/${serviceId}/${formattedDate}/${formattedTime}`);
+            setFetchingError(null);
+        } catch (error) {
+            console.error('Error fetching data:', error);
+            setFetchingError(error.message);
+        } finally {
+            setIsLoading(false);
         }
     };
 
-    const dateIsPast = (date) => {
-        const today = new Date();
-        today.setHours(0, 0, 0, 0);
-        today.setDate(today.getDate() + 1);
-        const dateProp = new Date(date);
-        dateProp.setHours(0, 0, 0, 0);
-        return today < dateProp;
-    };
 
     const generateTimeSlots = () => {
         const slots = [];
-        if (!reservationSettings || !reservationSettings.startTime || !reservationSettings.endTime || nailServiceDuration === 0) {
+        if (!activeReservationSetting || !activeReservationSetting.startTime || !activeReservationSetting.endTime || nailServiceDuration === 0) {
             return slots;
         }
 
-        const startTime = new Date(`${reservationDate.toISOString().split('T')[0]}T${reservationSettings.startTime}`);
-        const endTime = new Date(`${reservationDate.toISOString().split('T')[0]}T${reservationSettings.endTime}`);
+        const startTime = new Date(`${reservationDate.toISOString().split('T')[0]}T${activeReservationSetting.startTime}`);
+        const endTime = new Date(`${reservationDate.toISOString().split('T')[0]}T${activeReservationSetting.endTime}`);
         const localEndOfWork = new Date(`${formatDateBackend(selectedDate)}T19:00:00Z`);
 
         while (startTime <= endTime) {
@@ -116,13 +81,62 @@ const MobileReservationTimeSelector = () => {
         return slots;
     };
 
+    const dateIsPast = (date) => {
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        today.setDate(today.getDate() + 1);
+        const dateProp = new Date(date);
+        dateProp.setHours(0, 0, 0, 0);
+        return today < dateProp;
+    };
+    useEffect(() => {
+        fetchData();
+    }, [reservationDate]);
+
+    useEffect(() => {
+        setDateIsValid(dateIsPast(selectedDate));
+    }, [selectedDate]);
+
+    useEffect(() => {
+        const slots = generateTimeSlots();
+        if (slots.length === 0) {
+            if (direction === "0") {
+                alert("Ei vapaita aikoja, etsitään seuraava vapaa aika.")
+            }
+            if (direction === "1" || direction === "0") {
+                handleNextDay();
+            } else if (direction === "2") {
+                handlePreviousDay();
+            }
+        }
+        setTimeSlots(slots);
+        setPageIsReady(true);
+    }, [reservationDate, activeReservationSetting, reservations]);
+
+    if (!pageIsReady) {
+        return (
+            <div>
+                <p> Haetaan vapaita aikoja...</p>
+            </div>);
+    }
+    const handleTimeSelected = (selectedTime) => {
+        const formattedDate = formatDateBackend(selectedTime); // Format the date part
+        const formattedTime = selectedTime.toISOString(); // Format the time part as ISO string
+
+        if (reservationId) {
+            navigate(`/edit-reservation/${reservationId}/${formattedDate}/${formattedTime}/${serviceId}`);
+        } else {
+            navigate(`/reservations/new/details/${serviceId}/${formattedDate}/${formattedTime}`);
+        }
+    };
+
 
     const handlePreviousDay = () => {
         const previousDay = new Date(reservationDate);
         previousDay.setDate(previousDay.getDate() - 1);
         setReservationDate(previousDay);
         const formattedPreviousDay = formatDateBackend(previousDay);
-        navigate(`/reservations/new/${formattedPreviousDay}/${duration}/${serviceId}`);
+        navigate(`/reservations/new/${formattedPreviousDay}/${duration}/${serviceId}/2`);
     };
 
     const handleNextDay = () => {
@@ -130,7 +144,7 @@ const MobileReservationTimeSelector = () => {
         nextDay.setDate(nextDay.getDate() + 1);
         setReservationDate(nextDay);
         const formattedNextDay = formatDateBackend(nextDay);
-        navigate(`/reservations/new/${formattedNextDay}/${duration}/${serviceId}`);
+        navigate(`/reservations/new/${formattedNextDay}/${duration}/${serviceId}/1`);
     };
 
     const handleGoBack = () => {
@@ -141,10 +155,10 @@ const MobileReservationTimeSelector = () => {
         return string.charAt(0).toUpperCase() + string.slice(1);
     }
 
-    if (isLoading || !reservationSettings || !reservationSettings.startTime || !reservationSettings.endTime || nailServiceDuration === 0) {
+    if (isLoading || !activeReservationSetting || !activeReservationSetting.startTime || !activeReservationSetting.endTime || nailServiceDuration === 0 || timeSlots.length === 0) {
         return (
             <div>
-                <LoadingPlaceholder />
+                <p> Haetaan vapaita aikoja...</p>
             </div>
         );
     }

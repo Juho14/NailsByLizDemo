@@ -45,7 +45,13 @@ const DateAndServiceSelector = () => {
         if (selectedNailService) {
             const isValidDate = validateSelectedDate();
             if (isValidDate) {
-                navigate(`/reservations/new/${selectedDateInput}/${selectedNailService.duration}/${selectedNailService.id}`);
+                {
+                    isMobile ?
+                        navigate(`/reservations/new/${selectedDateInput}/${selectedNailService.duration}/${selectedNailService.id}/0`)
+                        :
+                        navigate(`/reservations/new/${selectedDateInput}/${selectedNailService.duration}/${selectedNailService.id}`)
+                }
+
             } else {
                 setShowNullDateMessage(false);
             }

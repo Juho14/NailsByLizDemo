@@ -13,11 +13,11 @@ export const NailServicesProvider = ({ children }) => {
     const { authToken, accessToken } = useAuth();
     const [nailServices, setNailServices] = useState([]);
     const [selectedService, setSelectedService] = useState(null);
-    const [isLoading, setIsLoading] = useState(true);
+    const [nailServiceIsLoading, setNailServiceIsLoading] = useState(true);
     const [error, setError] = useState(null);
 
     const getNailServices = async () => {
-        setIsLoading(true);
+        setNailServiceIsLoading(true);
         try {
             const services = await fetchNailServices(authToken, accessToken);
             setNailServices(services);
@@ -26,7 +26,7 @@ export const NailServicesProvider = ({ children }) => {
             setError('Failed to fetch nail services.');
             console.error('Error fetching nail services:', err);
         }
-        setIsLoading(false);
+        setNailServiceIsLoading(false);
 
     };
 
@@ -37,7 +37,7 @@ export const NailServicesProvider = ({ children }) => {
     }, [authToken]);
 
     const getServiceById = async (serviceId) => {
-        setIsLoading(true);
+        setNailServiceIsLoading(true);
         try {
             const service = await fetchSpecificNailService(serviceId);
             setSelectedService(service);
@@ -46,14 +46,14 @@ export const NailServicesProvider = ({ children }) => {
             setError('Failed to fetch the specific nail service.');
             console.error('Error fetching the specific nail service:', error);
         } finally {
-            setIsLoading(false);
+            setNailServiceIsLoading(false);
         }
     };
-    if (isLoading) {
+    if (nailServiceIsLoading) {
         return <LoadingPlaceholder />;
     }
     return (
-        <NailServicesContext.Provider value={{ nailServices, selectedService, getServiceById, isLoading, error }}>
+        <NailServicesContext.Provider value={{ nailServices, selectedService, getServiceById, isLoading: nailServiceIsLoading, error }}>
             {children}
         </NailServicesContext.Provider>
     );

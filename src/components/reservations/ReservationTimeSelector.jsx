@@ -2,17 +2,17 @@ import { Button, CircularProgress } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { fetchReservationsOfWeek, fetchSpecificReservation } from '../../fetches/ReservationFetch';
-import { fetchActiveReservationSetting } from '../../fetches/ReservationSettingsFetch';
 import { adjustTimeForTimezone, formatDateBackend, formatTimeHHMM } from '../TimeFormatting/TimeFormats';
 import { useAuth } from '../authentication/AuthProvider';
 import LoadingPlaceholder from '../errorhandling/LoadingPlaceholder';
+import { useReservationSettings } from '../reservationsettings/ReservationSettingsContex';
 
 const ReservationTimeSelector = () => {
     const { date, duration, serviceId, reservationId } = useParams();
     const selectedDate = new Date(date);
     const nailServiceDuration = parseInt(duration);
     const [reservationDate, setReservationDate] = useState(new Date(selectedDate));
-    const [reservationSettings, setReservationSettings] = useState(null);
+    const { activeReservationSetting } = useReservationSettings();
     const [reservations, setReservations] = useState([]);
     const [fetchingError, setFetchingError] = useState(null);
     const [reservation, setReservation] = useState(null);
@@ -54,30 +54,6 @@ const ReservationTimeSelector = () => {
             fetchReservationDetails();
         }
     }, [reservationId, authToken, accessToken]);
-
-    useEffect(() => {
-        let isMounted = true;
-        const fetchReservationSetting = async () => {
-            try {
-                const settingData = await fetchActiveReservationSetting();
-                if (isMounted) {
-                    setReservationSettings(settingData);
-                    setFetchingError(null);
-                }
-            } catch (error) {
-                console.error('Error fetching reservation settings:', error);
-                if (isMounted) {
-                    setFetchingError(error.message);
-                }
-            }
-        };
-
-        fetchReservationSetting();
-
-        return () => {
-            isMounted = false;
-        };
-    }, []);
 
     useEffect(() => {
         let isMounted = true;
@@ -128,7 +104,7 @@ const ReservationTimeSelector = () => {
     };
 
     const generateTimeSlots = (formattedDate) => {
-        if (!reservationSettings || !reservations) {
+        if (!activeReservationSetting || !reservations) {
             return [];
         }
 
@@ -136,8 +112,8 @@ const ReservationTimeSelector = () => {
         const formattedEndDate = new Date(`${formattedDate}T23:59:59Z`);
         const localEndOfWork = adjustTimeForTimezone(new Date(`${formattedDate}T16:00:00Z`));
         const timeSlots = [];
-        const startTime = new Date(`${formattedDate}T${reservationSettings.startTime}`);
-        const endTime = new Date(`${formattedDate}T${reservationSettings.endTime}`);
+        const startTime = new Date(`${formattedDate}T${activeReservationSetting.startTime}`);
+        const endTime = new Date(`${formattedDate}T${activeReservationSetting.endTime}`);
 
         while (startTime <= endTime) {
             let timeSlotEndTime = new Date(startTime.getTime() + (nailServiceDuration * 60000));
@@ -199,7 +175,7 @@ const ReservationTimeSelector = () => {
     }
 
     const renderTimeSlots = () => {
-        if (!reservationSettings) {
+        if (!activeReservationSetting) {
 
             return (
                 <div>

@@ -4,11 +4,13 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from './authentication/AuthProvider';
 import LoadingPlaceholder from './errorhandling/LoadingPlaceholder';
 import { useNailServices } from './nailservices/NailServiceContext';
+import { useReservationSettings } from './reservationsettings/ReservationSettingsContex';
 
 export default function FrontPage() {
     const { authToken, fname } = useAuth();
-    const { nailServices, isLoading, error } = useNailServices();
+    const { nailServices, nailServiceIsLoading, error } = useNailServices();
     const navigate = useNavigate();
+    const { openHours, reservationSettingIsLoading } = useReservationSettings();
 
     const handlePortfolioClick = () => {
         window.open('https://www.instagram.com/nailsbyliz.fi?igsh=MXVxeXJjaGZqYnFlZQ==', '_blank');
@@ -29,25 +31,33 @@ export default function FrontPage() {
                     Varaa aika
                 </Button>
             </div>
-            <div style={styles.priceList}>
-                <h2>Hinnasto</h2>
-                {isLoading ? (
-                    <LoadingPlaceholder />
-                ) : error ? (
-                    <p>{error}</p>
-                ) : (
-                    <ul>
-                        {nailServices.map(service => (
-                            <li key={service.id}>
-                                {service.type}: {service.price}€
-                            </li>
-                        ))}
-                    </ul>
-                )}
-                <Button variant="contained" color="primary" style={styles.button} onClick={() => navigate('/hinnasto')}>
-                    Lisätiedot
-                </Button>
-            </div>
+
+
+
+
+            {nailServiceIsLoading || reservationSettingIsLoading ? (
+                <LoadingPlaceholder />
+            ) : error ? (
+                <p>{error}</p>
+            ) : (
+                <div>
+                    <div><strong>Varausajat: {openHours.start} - {openHours.end}</strong></div>
+                    <div style={styles.priceList}>
+                        <h2>Hinnasto</h2>
+                        <ul>
+                            {nailServices.map(service => (
+                                <li key={service.id}>
+                                    {service.type}: {service.price}€
+                                </li>
+                            ))}
+                        </ul>
+                        <Button variant="contained" color="primary" style={styles.button} onClick={() => navigate('/hinnasto')}>
+                            Lisätiedot
+                        </Button>
+                    </div>
+                </div>
+            )}
+
             <div style={styles.contactInfo}>
                 <h2>Yhteystiedot</h2>
                 <p>Sposti: info@nailsbyliz.fi</p>

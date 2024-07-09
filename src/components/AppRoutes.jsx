@@ -7,6 +7,7 @@ import { useAuth } from './authentication/AuthProvider';
 import EditUserDetails from './authentication/EditUserDetails';
 import LoginPage from './authentication/LoginPage';
 import RegistrationPage from './authentication/RegistrationPage';
+import LoadingPlaceholder from './errorhandling/LoadingPlaceholder';
 import NotFound from './errorhandling/NotFound';
 import NailServices from './nailservices/NailServices';
 import CurrentUserReservations from './reservations/CurrentUsersReservations';
@@ -43,16 +44,15 @@ const AppRoutes = () => {
                 <Route path="/reservations" element={<DesktopReservations />} />
             )}
             {isMobile ? (
-                <Route path="/reservations/new/:date/:duration/:serviceId" element={<MobileReservationTimeSelector />} />
+                <Route path="/reservations/new/:date/:duration/:serviceId/:direction" element={<MobileReservationTimeSelector />} />
             ) : (
                 <Route path="/reservations/new/:date/:duration/:serviceId" element={<ReservationTimeSelector />} />
             )}
             {isMobile ? (
-                <Route path="/reservations/edit-time/:date/:duration/:serviceId/:reservationId" element={<MobileReservationTimeSelector />} />
+                <Route path="/reservations/edit-time/:date/:duration/:serviceId/:reservationId/:direction" element={<MobileReservationTimeSelector />} />
             ) : (
                 <Route path="/reservations/edit-time/:date/:duration/:serviceId/:reservationId" element={<ReservationTimeSelector />} />
             )}
-
             {isMobile ? (
                 <Route path="/reservations/current-week" element={<MobileReservationsOfCurrentWeek />} />
             ) : (
@@ -90,7 +90,7 @@ const AppRoutes = () => {
             <Route path="/reservations/new" element={<DateAndServiceSelector />} />
             <Route path="/reservations/new/details/:serviceId/:date/:time" element={<ReservationDialog />} />
             {isMobile ? (
-                <Route path="/reservations/new/:date/:duration/:serviceId" element={<MobileReservationTimeSelector />} />
+                <Route path="/reservations/new/:date/:duration/:serviceId/:direction" element={<MobileReservationTimeSelector />} />
             ) : (
                 <Route path="/reservations/new/:date/:duration/:serviceId" element={<ReservationTimeSelector />} />
             )}
@@ -101,7 +101,7 @@ const AppRoutes = () => {
 
     // If still loading authentication status, show a loading spinner or placeholder
     if (loading) {
-        return <div>Loading...</div>; // You can use a proper loading spinner here
+        return <LoadingPlaceholder />
     }
 
     return (
