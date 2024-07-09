@@ -11,7 +11,7 @@ const MobileReservationTimeSelector = () => {
     const { date, duration, serviceId, reservationId, direction } = useParams();
     const selectedDate = new Date(date);
     const nailServiceDuration = parseInt(duration);
-    const { activeReservationSetting } = useReservationSettings();
+    const { activeReservationSetting, openHours } = useReservationSettings();
     const [reservationDate, setReservationDate] = useState(new Date(selectedDate));
     const [reservations, setReservations] = useState([]);
     const [fetchingError, setFetchingError] = useState(null);

@@ -5,6 +5,7 @@ import './App.css';
 import AuthProvider from './components/authentication/AuthProvider';
 import { NailServicesProvider } from './components/nailservices/NailServiceContext';
 import MainNavigation from './components/navigation/MainNavigation';
+import { ReservationSettingsProvider } from './components/reservationsettings/ReservationSettingsContext';
 
 const theme = createTheme({
   palette: {
@@ -23,9 +24,11 @@ function App() {
       <CssBaseline />
       <HashRouter>
         <AuthProvider>
-          <NailServicesProvider>
-            <MainNavigation />
-          </NailServicesProvider>
+          <ReservationSettingsProvider>
+            <NailServicesProvider>
+              <MainNavigation />
+            </NailServicesProvider>
+          </ReservationSettingsProvider>
         </AuthProvider>
       </HashRouter>
     </ThemeProvider>
