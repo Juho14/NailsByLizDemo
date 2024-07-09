@@ -5,13 +5,13 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { fetchReservationsOfDay } from '../../fetches/ReservationFetch';
 import { adjustTimeForTimezone, formatDateBackend, formatDateLocale, formatTimeHHMM } from '../TimeFormatting/TimeFormats';
 import { useAuth } from '../authentication/AuthProvider';
-import { useReservationSettings } from '../reservationsettings/ReservationSettingsContext';
+import { useReservationSettings } from '../reservationsettings/ReservationSettingsContex';
 
 const MobileReservationTimeSelector = () => {
     const { date, duration, serviceId, reservationId, direction } = useParams();
     const selectedDate = new Date(date);
     const nailServiceDuration = parseInt(duration);
-    const { activeReservationSetting, openHours } = useReservationSettings();
+    const { activeReservationSetting } = useReservationSettings();
     const [reservationDate, setReservationDate] = useState(new Date(selectedDate));
     const [reservations, setReservations] = useState([]);
     const [fetchingError, setFetchingError] = useState(null);
@@ -97,6 +97,22 @@ const MobileReservationTimeSelector = () => {
         setDateIsValid(dateIsPast(selectedDate));
     }, [selectedDate]);
 
+    const handlePreviousDay = () => {
+        const previousDay = new Date(reservationDate);
+        previousDay.setDate(previousDay.getDate() - 1);
+        setReservationDate(previousDay);
+        const formattedPreviousDay = formatDateBackend(previousDay);
+        navigate(`/reservations/new/${formattedPreviousDay}/${duration}/${serviceId}/2`);
+    };
+
+    const handleNextDay = () => {
+        const nextDay = new Date(reservationDate);
+        nextDay.setDate(nextDay.getDate() + 1);
+        setReservationDate(nextDay);
+        const formattedNextDay = formatDateBackend(nextDay);
+        navigate(`/reservations/new/${formattedNextDay}/${duration}/${serviceId}/1`);
+    };
+
     useEffect(() => {
         const slots = generateTimeSlots();
         if (slots.length === 0) {
@@ -108,6 +124,14 @@ const MobileReservationTimeSelector = () => {
             } else if (direction === "2") {
                 handlePreviousDay();
             }
+        }
+        const currentDate = new Date();
+
+        if (reservationDate < currentDate && direction === "2") {
+            alert("Ei vapaita aikoja täällä päin...")
+            const nextAvailableDate = new Date()
+            nextAvailableDate.setDate(nextAvailableDate.getDate() + 1);
+            navigate(`/reservations/new/${formatDateBackend(nextAvailableDate)}/${duration}/${serviceId}/1`);
         }
         setTimeSlots(slots);
         setPageIsReady(true);
@@ -128,23 +152,6 @@ const MobileReservationTimeSelector = () => {
         } else {
             navigate(`/reservations/new/details/${serviceId}/${formattedDate}/${formattedTime}`);
         }
-    };
-
-
-    const handlePreviousDay = () => {
-        const previousDay = new Date(reservationDate);
-        previousDay.setDate(previousDay.getDate() - 1);
-        setReservationDate(previousDay);
-        const formattedPreviousDay = formatDateBackend(previousDay);
-        navigate(`/reservations/new/${formattedPreviousDay}/${duration}/${serviceId}/2`);
-    };
-
-    const handleNextDay = () => {
-        const nextDay = new Date(reservationDate);
-        nextDay.setDate(nextDay.getDate() + 1);
-        setReservationDate(nextDay);
-        const formattedNextDay = formatDateBackend(nextDay);
-        navigate(`/reservations/new/${formattedNextDay}/${duration}/${serviceId}/1`);
     };
 
     const handleGoBack = () => {
@@ -174,7 +181,7 @@ const MobileReservationTimeSelector = () => {
             <div style={{ marginBottom: '10px', display: 'flex', justifyContent: 'flex-start' }}>
                 {dateIsValid || userRole === "ROLE_ADMIN" ? (
                     <Button variant="contained" style={{ border: '1px solid black', marginRight: '5px' }} onClick={handlePreviousDay}>
-                        Edellinen päivä
+                        Edelliset ajat
                     </Button>
                 ) : null}
                 <div style={{ display: 'flex', justifyContent: dateIsValid ? 'flex-start' : 'center' }}>
@@ -183,7 +190,7 @@ const MobileReservationTimeSelector = () => {
                         style={{ border: '1px solid black' }}
                         onClick={handleNextDay}
                     >
-                        Seuraava päivä
+                        Seuraavat ajat
                     </Button>
                 </div>
             </div>
