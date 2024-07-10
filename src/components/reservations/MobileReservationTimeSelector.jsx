@@ -127,7 +127,7 @@ const MobileReservationTimeSelector = () => {
         }
         const currentDate = new Date();
 
-        if (reservationDate < currentDate && direction === "2") {
+        if (reservationDate < currentDate && direction === "2" && userRole !== "ROLE_ADMIN") {
             alert("Ei vapaita aikoja täällä päin...")
             const nextAvailableDate = new Date()
             nextAvailableDate.setDate(nextAvailableDate.getDate() + 1);
