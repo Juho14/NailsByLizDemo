@@ -5,7 +5,7 @@ import { fetchReservationsOfWeek, fetchSpecificReservation } from '../../fetches
 import { adjustTimeForTimezone, formatDateBackend, formatTimeHHMM } from '../TimeFormatting/TimeFormats';
 import { useAuth } from '../authentication/AuthProvider';
 import LoadingPlaceholder from '../errorhandling/LoadingPlaceholder';
-
+import { useReservationSettings } from '../reservationsettings/ReservationSettingsContext';
 
 const ReservationTimeSelector = () => {
     const { date, duration, serviceId, reservationId } = useParams();
